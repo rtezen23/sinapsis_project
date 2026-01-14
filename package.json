@@ -1,0 +1,30 @@
+{
+  "name": "sinapsis_project",
+  "version": "1.0.0",
+  "description": "Reto técnico (nodejs) para empresa sinapsis, puesto analista de plataformas",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rtezen23/sinapsis_project.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rtezen23/sinapsis_project/issues"
+  },
+  "homepage": "https://github.com/rtezen23/sinapsis_project#readme",
+  "dependencies": {
+    "@prisma/client": "^6.19.2",
+    "dotenv": "^17.2.3",
+    "express": "^5.2.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.11",
+    "prisma": "^6.19.2"
+  }
+}
