@@ -1,0 +1,1 @@
+Reto técnico (nodejs) para empresa sinapsis, puesto analista de plataformas
