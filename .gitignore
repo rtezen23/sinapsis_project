@@ -122,3 +122,6 @@ dist
 
 # for vscode prisma extension issue
 .vscode
+
+# for testing the APIs requests (VSC API REST Extension)
+*.http
