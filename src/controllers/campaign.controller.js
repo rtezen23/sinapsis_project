@@ -74,7 +74,7 @@ const calculateCampaignStatus = async(req, res) => {
     const campaignId = parseInt(req.params.id);
 
     // ver si campaña existe
-    const campaign = prisma.campaigns.findUnique({
+    const campaign = await prisma.campaigns.findUnique({
         where:{
             id: campaignId
         }}
@@ -97,26 +97,34 @@ const calculateCampaignStatus = async(req, res) => {
         }
     });
 
-    // obtener el mensaje de esa campaña con mayor shipping_hour
-    const maxShipHourValue = await prisma.messages.aggregate({
-        _max: {
-            shipping_hour: true,
-        },
-        where: {
-            campaign_id: campaignId,
-        }
-    });
+    // obtener valor de processStatus antes del resultado para usarlo para final_hour
+    const processStatus = pendingMessage ? 1 : 2
 
-    // obtener la fecha del valor mayor
-    const maxShipHour = maxShipHourValue._max.shipping_hour;
+    // armamos el objeto que actualizará el campaign 
+    const updateCampaign = {
+        process_status: processStatus
+    }
+
+    // si ya no hay mensajes pendientes (status = 2)
+    if (processStatus === 2) {
+        // obtener el mensaje de esa campaña con mayor shipping_hour
+        const maxShipHourValue = await prisma.messages.aggregate({
+            _max: {
+                shipping_hour: true,
+            },
+            where: {
+                campaign_id: campaignId,
+            }
+        });
+
+        // obtener la fecha del valor mayor y asignarlo a objeto de update
+        updateCampaign.final_hour = maxShipHourValue._max.shipping_hour;
+    }
 
     // ACTUALIZAR CAMPAÑA
     const newCampaign = await prisma.campaigns.update({
         where: { id: campaignId },
-        data: {
-            process_status: pendingMessage ? 1 : 2,
-            final_hour: maxShipHour
-        }
+        data: updateCampaign
     });
 
     // devolver resultado formateando fecha para mostrar solo la hora (visual)
