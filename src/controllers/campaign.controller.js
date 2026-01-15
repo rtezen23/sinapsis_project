@@ -119,6 +119,7 @@ const calculateCampaignStatus = async(req, res) => {
         }
     });
 
+    // devolver resultado formateando fecha para mostrar solo la hora (visual)
     return res.status(200).json({
         message: 'Status de campaña actualizado',
         data: {
@@ -127,7 +128,7 @@ const calculateCampaignStatus = async(req, res) => {
             total_sent: newCampaign.total_sent,
             total_error: newCampaign.total_error,
             process_status: newCampaign.process_status,
-            final_hour: newCampaign.final_hour,
+            final_hour: newCampaign.final_hour ? newCampaign.final_hour.toISOString().split('T')[1].split('.')[0]: null,
         }
     });
 
