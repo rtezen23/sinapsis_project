@@ -40,23 +40,49 @@ const calculateTotals = async (req, res) => {
             }
         });
 
-        // actualizar campaña
+        // actualizar process_status (quedan mensajes pendientes?)
+        // ver si hay al menos un mensaje pendiente
+        const pendingMessage = await prisma.messages.findFirst({
+            where: {
+                campaign_id: campaignId,
+                shipping_status: 1
+            }
+        });
+
+        // obtener el mensaje de esa campaña con mayor shipping_hour
+        const maxShipHourValue = await prisma.messages.aggregate({
+            _max: {
+                shipping_hour: true,
+            },
+            where: {
+                campaign_id: campaignId,
+            }
+        });
+
+        // obtener la fecha del valor mayor
+        const maxShipHour = maxShipHourValue._max.shipping_hour;
+
+        // ACTUALIZAR CAMPAÑA
         const newCampaign = await prisma.campaigns.update({
-        where: { id: campaignId },
-        data: {
-            total_records: totalMessages,
-            total_sent: sentMessages,
-            total_error: errorMessages
-        }
+            where: { id: campaignId },
+            data: {
+                total_records: totalMessages,
+                total_sent: sentMessages,
+                total_error: errorMessages,
+                process_status: pendingMessage ? 1 : 2,
+                final_hour: maxShipHour
+            }
         });
 
         return res.status(200).json({
-            message: 'Totales de campaña actualizados',
+            message: 'Columnas de campaña actualizados',
             data: {
                 id: newCampaign.id,
                 total_records: newCampaign.total_records,
                 total_sent: newCampaign.total_sent,
-                total_error: newCampaign.total_error
+                total_error: newCampaign.total_error,
+                process_status: newCampaign.process_status,
+                final_hour: newCampaign.final_hour
             }
         });
 
