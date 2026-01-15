@@ -131,8 +131,6 @@ const calculateCampaignStatus = async(req, res) => {
             final_hour: newCampaign.final_hour ? newCampaign.final_hour.toISOString().split('T')[1].split('.')[0]: null,
         }
     });
-
-
 }
 
 module.exports = {
